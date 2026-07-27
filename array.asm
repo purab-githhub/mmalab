@@ -8,7 +8,7 @@ section .bss
     result resw 1
     temp1 resb 1
 
-%macro concat 4
+%macro concat 4;macro is uded for not repeating the system call again and again
     mov rax, %1
     mov rdi, %2
     mov rsi, %3
