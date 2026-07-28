@@ -1,5 +1,5 @@
 section .data
-    new_array db 11h,12h,13h,14h,15h
+    new_array db 12h,62h,25h,25h,03h
     msg db "result of array addition is "
     msglen equ $-msg
     newline db 10
