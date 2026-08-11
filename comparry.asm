@@ -9,6 +9,10 @@ nw_array db 12h,62h,25h,25h,03h
 msg db "the comparison of the whole array elements"
 msglen equ $-msg,10
 
+section .bss
+arry resw 2
+temporary_variable resb 1
+
 
 %macro comp 4
 mov rax,%1
@@ -20,5 +24,6 @@ mov rdx,%4
 section .text
 global _start
 _start:
-
+mov rsi,byte[nw_array]
+                           
 
