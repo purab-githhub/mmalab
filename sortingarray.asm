@@ -1,42 +1,107 @@
 section .data
-;we need to have an list of aaray
 
-arr db 12h,62h,22h,25h,03h
+    arr db 25h, 12h, 45h, 09h, 31h
+    msg db "Sorted array in HEX:", 10
+    msglen equ $ - msg
+
+section .bss
+    result resb 20
 
 section .text
-global _start:
+    global _start
+
 _start:
 
-mov rdx,4; as we know that sorting goes from til n-1
+    mov bl, 5
 
-again:
-mov rsi,0   ;i have to actual access the indexes only for the comparison to actuall acess the element at that indexes
+loop_outer:
+    mov cl, 4
+    mov rsi, arr
 
-;now u just have to add the elements to the registers or load the registers with the element
+up:
+    mov al, byte [rsi]
+    cmp al, byte [rsi + 1]
+    jbe only_inc
 
-next:
+    xchg al, byte [rsi + 1]
+    mov byte [rsi], al
 
-mov al,[arr + rsi]; //access the first element
+only_inc:
+    inc rsi
+    dec cl
+    jnz up
 
-mov bl,[arr+rsi+1];//accessing the second element
-;ow we have to compare the registers which contain the elements
+    dec bl
+    jnz loop_outer
 
-cmp al,bl
 
-jbe skip ;i have to jump if equal so it will just inc the rsi only 
+    ; Display message
 
-; i just have to know swap
-mov [arr+rsi+1],al
-mov [arr+rsi],bl
-;if my index+1 is grater  than index current then shift or swap
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg
+    mov rdx, msglen
+    syscall
 
-skip:
-inc rsi
-cmp rsi, rdx
-    jb next
 
-    dec rdx
-    jnz again
+    ; Display sorted array
+
+    mov rdi, arr
+    mov rsi, result
+    mov dl, 5
+
+disp_loop:
+
+    mov al, byte [rdi]
+    mov bl, al
+
+    ; First digit
+
+    shr al, 4
+    cmp al, 09H
+    jbe first_digit
+
+    add al, 07H
+
+first_digit:
+    add al, 30H
+    mov byte [rsi], al
+
+    ; Second digit
+
+    mov al, bl
+    and al, 0FH
+    cmp al, 09H
+    jbe second_digit
+
+    add al, 07H
+
+second_digit:
+    add al, 30H
+    mov byte [rsi + 1], al
+
+    ; Add H and space
+
+    mov byte [rsi + 2], 'H'
+    mov byte [rsi + 3], ' '
+
+    add rsi, 4
+    inc rdi
+
+    dec dl
+    jnz disp_loop
+
+
+    ; Display result
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, result
+    mov rdx, 20
+    syscall
+
+
+    ; Exit
 
     mov rax, 60
     mov rdi, 0
